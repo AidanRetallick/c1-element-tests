@@ -1,7 +1,11 @@
 # Name of executables: The prefix "noinst" means the executables don't
 # have to be installed anywhere.
 noinst_PROGRAMS = ks_fd_testing \
-                  triangle_element
+                  triangle_element \
+				  basis_function_check_fvk \
+				  basis_function_check_ks \
+				  internal_kink_fvk \
+				  internal_kink_ks
 include $(top_srcdir)/config/makefile_templates/demo_drivers
 #---------------------------------------------------------------------------
 
@@ -10,11 +14,27 @@ ks_fd_testing_SOURCES = \
  ks_fd_testing.cc
 triangle_element_SOURCES = \
  triangle_element.cc
+basis_function_check_fvk_SOURCES = \
+ basis_function_check_fvk.cc
+basis_function_check_ks_SOURCES = \
+ basis_function_check_ks.cc
+internal_kink_fvk_SOURCES = \
+ internal_kink_fvk.cc
+internal_kink_ks_SOURCES = \
+ internal_kink_ks.cc
 #---------------------------------------------------------------------------
 
 ks_fd_testing_LDADD = -L@libdir@ -lc1_koiter_steigmann \
  -lgeneric $(EXTERNAL_LIBS) $(FLIBS)
 triangle_element_LDADD = -L@libdir@ -lc1_foeppl_von_karman \
+ -lgeneric $(EXTERNAL_LIBS) $(FLIBS)
+basis_function_check_fvk_LDADD = -L@libdir@ -lc1_foeppl_von_karman \
+ -lgeneric $(EXTERNAL_LIBS) $(FLIBS)
+basis_function_check_ks_LDADD = -L@libdir@ -lc1_koiter_steigmann \
+ -lgeneric $(EXTERNAL_LIBS) $(FLIBS)
+internal_kink_fvk_LDADD = -L@libdir@ -lc1_foeppl_von_karman \
+ -lgeneric $(EXTERNAL_LIBS) $(FLIBS)
+internal_kink_ks_LDADD = -L@libdir@ -lc1_koiter_steigmann \
  -lgeneric $(EXTERNAL_LIBS) $(FLIBS)
 
 # Local sources that Jack's own code depends on: This code also uses

@@ -93,7 +93,7 @@ namespace Parameters
   // (needed to update boundary elements to curved)
 
   /// Vertices
-  Vector<Vector<double>> Vertices{{0.0,0.0}, {1.0, 0.0}, {1.0, 1.0}};
+  Vector<Vector<double>> Vertices{{-0.01, 1.0}, {-1.0, 0.01}, {0.0, 0.0}};
 
   /// Edge 0 of the triangle
   CurvilineLine Edge_0(Vertices[1],Vertices[2]);
@@ -108,7 +108,7 @@ namespace Parameters
   CurvilineEllipseTop Curved_edge_2(1.0,1.0);
 
   /// Vector container used to iterate over the edges
-  Vector<CurvilineGeomObject*> Parametric_curve_pt = {&Edge_0, &Edge_1, &Edge_2};
+  Vector<CurvilineGeomObject*> Parametric_curve_pt = {&Edge_0, &Edge_1, &Curved_edge_2};
 
 
   //                           PROBLEM DEFINITIONS
@@ -330,7 +330,7 @@ UnstructuredFvKProblem<ELEMENT>::UnstructuredFvKProblem(double element_area)
   build_mesh();
 
   // Curved Edge upgrade
-  //upgrade_edge_elements_to_curve(Edge_2_bnum, Bulk_mesh_pt);
+  upgrade_edge_elements_to_curve(Edge_2_bnum, Bulk_mesh_pt);
 
   // Rotate degrees of freedom
   // rotate_edge_degrees_of_freedom();
@@ -656,7 +656,7 @@ void UnstructuredFvKProblem<ELEMENT>::upgrade_edge_elements_to_curve(
   switch (ibound)
   {
     case Edge_2_bnum:
-      parametric_curve_pt = &Parameters::Edge_2;
+      parametric_curve_pt = &Parameters::Curved_edge_2;
       break;
     default:
       throw OomphLibError("Unexpected boundary number. Please add additional \
@@ -835,7 +835,6 @@ void UnstructuredFvKProblem<ELEMENT>::doc_solution(const std::string& comment)
 
   // Number of plot points
   unsigned npts = 200;
-
   sprintf(filename, "RESLT/soln%i.dat", Doc_info.number());
   some_file.open(filename);
   Bulk_mesh_pt->output(some_file, npts);
@@ -843,8 +842,7 @@ void UnstructuredFvKProblem<ELEMENT>::doc_solution(const std::string& comment)
   some_file.close();
 
   // Number of plot points
-  npts = 20;
-
+  npts = 2;
   sprintf(filename, "RESLT/soln_coarse%i.dat", Doc_info.number());
   some_file.open(filename);
   Bulk_mesh_pt->output(some_file, npts);
@@ -912,6 +910,12 @@ int main(int argc, char** argv)
       problem.doc_solution();
       mesh_pt->node_pt(i)->set_value(2+j,0.0);
     }
+  }
+  for(unsigned j=0; j<10; j++)
+  {
+    mesh_pt->element_pt(0)->internal_data_pt(2)->set_value(j, 1.0);
+    problem.doc_solution();
+    mesh_pt->element_pt(0)->internal_data_pt(2)->set_value(j, 0.0);
   }
 
   // Print success
